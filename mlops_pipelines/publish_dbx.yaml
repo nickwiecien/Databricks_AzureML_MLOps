@@ -40,7 +40,7 @@ steps:
       WORKSPACE_ID=$(az databricks workspace show --resource-group $RESOURCE_GROUP --name $WORKSPACE_NAME --query id -o tsv)  
   
       # Upload notebook to target workspace  
-      databricks workspace import -w $WORKSPACE_ID -l PYTHON -f $NOTEBOOK_PATH -o $NOTEBOOK_PATH_DBX  
+      databricks workspace import -w $WORKSPACE_ID -l PYTHON -f JUPYTER -o $NOTEBOOK_PATH $NOTEBOOK_PATH_DBX  
   
       # Run notebook  
-      databricks workspace execute-command -w $WORKSPACE_ID -c "$NOTEBOOK_PATH_DBX" -o "$NOTEBOOK_PATH_DBX-output.html" -j "$NOTEBOOK_PATH_DBX-job.json" --params "$PARAMETERS"  
+      # databricks workspace execute-command -w $WORKSPACE_ID -c "$NOTEBOOK_PATH_DBX" -o "$NOTEBOOK_PATH_DBX-output.html" -j "$NOTEBOOK_PATH_DBX-job.json" --params "$PARAMETERS"  
