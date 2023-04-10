@@ -24,6 +24,8 @@ steps:
     scriptType: 'bash'  
     scriptLocation: 'inlineScript'  
     inlineScript: |  
+
+      pip install databricks-cli
   
       echo $RESOURCE_GROUP
 
