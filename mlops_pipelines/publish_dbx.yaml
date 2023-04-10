@@ -24,8 +24,8 @@ steps:
     scriptType: 'bash'  
     scriptLocation: 'inlineScript'  
     inlineScript: |  
-      DATABRICKS_TOKEN = $DBX_PAT
-      DATABRICKS_HOST = $DBX_WORKSPACE
+      DATABRICKS_TOKEN="$DBX_PAT"
+      DATABRICKS_HOST="$DBX_WORKSPACE"
 
       pip install databricks-cli
   
