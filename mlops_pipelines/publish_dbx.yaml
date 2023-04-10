@@ -1,0 +1,42 @@
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - /
+
+variables:
+- group: aml_dbx_variables
+  
+pool:  
+  vmImage: 'ubuntu-latest'  
+  
+steps:  
+- task: UsePythonVersion@0  
+  inputs:  
+    versionSpec: '3.8'  
+    addToPath: true  
+  
+- task: AzureCLI@2  
+  inputs:  
+    azureSubscription: '$(SUBSCRIPTION_SVC_CONNECTION)'  
+    scriptType: 'bash'  
+    scriptLocation: 'inlineScript'  
+    inlineScript: |  
+  
+      echo $RESOURCE_GROUP
+
+      echo $PARAMETERS
+
+      # Authenticate with Azure using service principal  
+      az login --service-principal -u $AZURE_SP_APP_ID -p $AZURE_SP_PASSWORD --tenant $AZURE_SP_TENANT  
+  
+      # Get workspace ID  
+      WORKSPACE_ID=$(az databricks workspace show --resource-group $RESOURCE_GROUP --name $WORKSPACE_NAME --query id -o tsv)  
+  
+      # Upload notebook to target workspace  
+      az databricks workspace import -w $WORKSPACE_ID -l PYTHON -f $NOTEBOOK_PATH -o $NOTEBOOK_PATH_DBX  
+  
+      # Run notebook  
+      az databricks workspace execute-command -w $WORKSPACE_ID -c "$NOTEBOOK_PATH_DBX" -o "$NOTEBOOK_PATH_DBX-output.html" -j "$NOTEBOOK_PATH_DBX-job.json" --params "$PARAMETERS"  
