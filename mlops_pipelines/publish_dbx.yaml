@@ -41,7 +41,7 @@ steps:
       # Get workspace ID  
       WORKSPACE_ID=$(az databricks workspace show --resource-group $RESOURCE_GROUP --name $WORKSPACE_NAME --query id -o tsv)  
 
-      databricks configure
+      databricks configure --token
   
       # Upload notebook to target workspace  
       databricks workspace import -l PYTHON -f JUPYTER -o $NOTEBOOK_PATH $NOTEBOOK_PATH_DBX  
