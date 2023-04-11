@@ -1,10 +1,10 @@
-trigger:
-  branches:
-    include:
-    - main
-  paths:
-    include:
-    - /
+# trigger:
+#   branches:
+#     include:
+#     - main
+#   paths:
+#     include:
+#     - /
 
 variables:
 - group: aml_dbx_variables
@@ -19,7 +19,7 @@ steps:
     addToPath: true  
   
 - task: AzureCLI@2  
-  displayName: 'Submit and Run Databricks Job (Train, Evaluate, Register)'
+  displayName: 'Submit and Run Databricks Job (Model Promotion)'
   env:
       DATABRICKS_HOST: $(DBX_WORKSPACE)
       DATABRICKS_TOKEN: $(DBX_PAT)
@@ -33,19 +33,19 @@ steps:
       pip install databricks-cli
   
       # Upload notebook to target workspace  
-      databricks workspace import $NOTEBOOK_PATH $NOTEBOOK_PATH_DBX -l PYTHON -f JUPYTER -o
+      databricks workspace import $RELEASE_NOTEBOOK_PATH $RELEASE_NOTEBOOK_PATH_DBX -l PYTHON -f JUPYTER -o
 
       # Remove existing training job
-      databricks jobs list --output json | jq '.jobs[] | select(.settings.name == "TrainingRun") | .job_id' | xargs -n 1 databricks jobs delete --job-id
+      databricks jobs list --output json | jq '.jobs[] | select(.settings.name == "ModelRelease") | .job_id' | xargs -n 1 databricks jobs delete --job-id
 
       # Create training job definition
       JOB_ID=$(databricks jobs create --json '{
-        "name": "TrainingRun",
+        "name": "ModelRelease",
         "existing_cluster_id": "$(DBX_CLUSTER)",
         "timeout_seconds": 3600,
         "max_retries": 1,
         "notebook_task": {
-          "notebook_path": "$(NOTEBOOK_PATH_DBX)",
+          "notebook_path": "$(RELEASE_NOTEBOOK_PATH_DBX)",
           "base_parameters": {"subscription_id": "$(SUBSCRIPTION_ID)", "resource_group": "$(RESOURCE_GROUP)", "workspace": "$(AML_WORKSPACE_NAME)", "model_name": "DEV-diabetes-model", "endpoint_name": "DEV-diabetes-endpoint", "endpoint_description": "Regression model for predicting disease pregression"}
         }
       }' | jq '.job_id')
