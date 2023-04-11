@@ -19,13 +19,13 @@ steps:
     addToPath: true  
   
 - task: AzureCLI@2  
+  env:
+      DATABRICKS_HOST: $(DBX_WORKSPACE)
+      DATABRICKS_TOKEN: $(DBX_PAT)
   inputs:  
     azureSubscription: '$(SUBSCRIPTION_SVC_CONNECTION)'  
     scriptType: 'bash'  
     scriptLocation: 'inlineScript'  
-    env:
-      DATABRICKS_HOST: $(DBX_WORKSPACE)
-      DATABRICKS_TOKEN: $(DBX_PAT)
     inlineScript: |  
 
       pip install databricks-cli
