@@ -43,13 +43,13 @@ steps:
         "max_retries": 1,
         "notebook_task": {
           "notebook_path": "$(NOTEBOOK_PATH_DBX)",
-          "base_parameters":{}
+          "base_parameters": "$(PARAMETERS)"
         }
       }' | jq '.job_id')
 
       echo $JOB_ID
 
-      RUN_ID=$(databricks jobs run-now --job-id $JOB_ID --notebook-params $PARAMETERS | jq '.run_id')
+      RUN_ID=$(databricks jobs run-now --job-id $JOB_ID | jq '.run_id')
 
   
       # Run notebook  
