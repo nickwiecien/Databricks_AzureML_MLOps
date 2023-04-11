@@ -29,25 +29,17 @@ steps:
     inlineScript: |  
 
       pip install databricks-cli
-  
-      echo $RESOURCE_GROUP
 
-      echo $PARAMETERS
-
-      az config set extension.use_dynamic_install=yes_without_prompt
+      # az config set extension.use_dynamic_install=yes_without_prompt
 
       # Authenticate with Azure using service principal  
       az login --service-principal -u $AZURE_SP_APP_ID -p $AZURE_SP_PASSWORD --tenant $AZURE_SP_TENANT  
   
       # Get workspace ID  
-      WORKSPACE_ID=$(az databricks workspace show --resource-group $RESOURCE_GROUP --name $WORKSPACE_NAME --query id -o tsv)  
-
-      # databricks configure 
-
-      # rm ~/.databricks.cfg
+      # WORKSPACE_ID=$(az databricks workspace show --resource-group $RESOURCE_GROUP --name $WORKSPACE_NAME --query id -o tsv)  
   
       # Upload notebook to target workspace  
-      databricks workspace import -l PYTHON -f JUPYTER -o $NOTEBOOK_PATH $NOTEBOOK_PATH_DBX  
+      databricks workspace import $NOTEBOOK_PATH $NOTEBOOK_PATH_DBX -l PYTHON -f JUPYTER 
   
       # Run notebook  
       # databricks workspace execute-command -w $WORKSPACE_ID -c "$NOTEBOOK_PATH_DBX" -o "$NOTEBOOK_PATH_DBX-output.html" -j "$NOTEBOOK_PATH_DBX-job.json" --params "$PARAMETERS"  
