@@ -28,16 +28,19 @@ steps:
     scriptLocation: 'inlineScript'  
     inlineScript: |  
 
+      # Install Databricks CLI
       pip install databricks-cli
 
       # Authenticate with Azure using service principal  
-      az login --service-principal -u $AZURE_SP_APP_ID -p $AZURE_SP_PASSWORD --tenant $AZURE_SP_TENANT  
+      # az login --service-principal -u $AZURE_SP_APP_ID -p $AZURE_SP_PASSWORD --tenant $AZURE_SP_TENANT  
   
       # Upload notebook to target workspace  
       databricks workspace import $NOTEBOOK_PATH $NOTEBOOK_PATH_DBX -l PYTHON -f JUPYTER -o
 
+      # Remove existing training job
       databricks jobs list --output json | jq '.jobs[] | select(.settings.name == "TrainingRun") | .job_id' | xargs -n 1 databricks jobs delete --job-id
 
+      # Create training job definition
       JOB_ID=$(databricks jobs create --json '{
         "name": "TrainingRun",
         "existing_cluster_id": "$(DBX_CLUSTER)",
@@ -45,14 +48,11 @@ steps:
         "max_retries": 1,
         "notebook_task": {
           "notebook_path": "$(NOTEBOOK_PATH_DBX)",
-          "base_parameters": {"subscription_id": "$(SUBSCRIPTION_ID)", "resource_group": "$(RESOURCE_GROUP)", "workspace": "$(WORKSPACE_NAME)", "model_name": "DEV-diabetes-model", "endpoint_name": "DEV-diabetes-endpoint", "endpoint_description": "Regression model for predicting disease pregression"}
+          "base_parameters": {"subscription_id": "$(SUBSCRIPTION_ID)", "resource_group": "$(RESOURCE_GROUP)", "workspace": "$(AML_WORKSPACE_NAME)", "model_name": "DEV-diabetes-model", "endpoint_name": "DEV-diabetes-endpoint", "endpoint_description": "Regression model for predicting disease pregression"}
         }
       }' | jq '.job_id')
 
-      echo $JOB_ID
-
+      # Submit run
       RUN_ID=$(databricks jobs run-now --job-id $JOB_ID | jq '.run_id')
 
-  
-      # Run notebook  
-      # databricks workspace execute-command -w $WORKSPACE_ID -c "$NOTEBOOK_PATH_DBX" -o "$NOTEBOOK_PATH_DBX-output.html" -j "$NOTEBOOK_PATH_DBX-job.json" --params "$PARAMETERS"  
+      echo $RUN_ID
