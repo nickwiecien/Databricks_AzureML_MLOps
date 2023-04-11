@@ -45,14 +45,7 @@ steps:
         "max_retries": 1,
         "notebook_task": {
           "notebook_path": "$(NOTEBOOK_PATH_DBX)",
-          "base_parameters": "{
-            "subscription_id": "$(SUBSCRIPTION_ID)",
-            "resource_group": "$(RESOURCE_GROUP)",
-            "workspace": "$(WORKSPACE_NAME)",
-            "model_name": "DEV-diabetes-model",
-            "endpoint_name": "DEV-diabetes-endpoint",
-            "endpoint_description": "Regression model for predicting disease pregression",
-          }"
+          "base_parameters": {"subscription_id": "$(SUBSCRIPTION_ID)"}
         }
       }' | jq '.job_id')
 
