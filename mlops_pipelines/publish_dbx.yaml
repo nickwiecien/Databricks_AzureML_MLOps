@@ -43,7 +43,7 @@ steps:
         "max_retries": 1,
         "notebook_task": {
           "notebook_path": "$(NOTEBOOK_PATH_DBX)",
-          "base_parameters": $(PARAMETERS)
+          "base_parameters": "$(PARAMETERS)"
         }
       }' | jq '.job_id')
 
