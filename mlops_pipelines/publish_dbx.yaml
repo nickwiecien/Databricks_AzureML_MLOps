@@ -23,6 +23,9 @@ steps:
     azureSubscription: '$(SUBSCRIPTION_SVC_CONNECTION)'  
     scriptType: 'bash'  
     scriptLocation: 'inlineScript'  
+    env:
+      DATABRICKS_HOST: $(DBX_WORKSPACE)
+      DATABRICKS_TOKEN: $(DBX_PAT)
     inlineScript: |  
 
       pip install databricks-cli
@@ -39,18 +42,7 @@ steps:
       # Get workspace ID  
       WORKSPACE_ID=$(az databricks workspace show --resource-group $RESOURCE_GROUP --name $WORKSPACE_NAME --query id -o tsv)  
 
-      echo "[DEFAULT]                                                               
-      host = $DBX_WORKSPACE
-      token = $DBX_PAT" > ~/.databricks.cfg
-
-      DATABRICKS_CONFIG_FILE="~/.databricks.cfg"
-
-      DATABRICKS_HOST=$DBX_HOST
-      DATABRICKS_TOKEN=$DBX_PAT
-
-      echo DATABRICKS_HOST
-
-      databricks configure 
+      # databricks configure 
 
       # rm ~/.databricks.cfg
   
