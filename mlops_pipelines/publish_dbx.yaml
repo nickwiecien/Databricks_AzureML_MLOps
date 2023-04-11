@@ -45,11 +45,12 @@ steps:
 
       DATABRICKS_CONFIG_FILE="~/.databricks.cfg"
 
-      echo "[DEFAULT]                                                               
-      host = $DBX_WORKSPACE
-      token = $DBX_PAT"
+      DATABRICKS_HOST=$DBX_HOST
+      DATABRICKS_TOKEN=$DBX_PAT
 
-      databricks configure --token -f ~/.databricks.cfg
+      echo DATABRICKS_HOST
+
+      databricks configure 
 
       # rm ~/.databricks.cfg
   
