@@ -24,8 +24,6 @@ steps:
     scriptType: 'bash'  
     scriptLocation: 'inlineScript'  
     inlineScript: |  
-      DATABRICKS_TOKEN="$DBX_PAT"
-      DATABRICKS_HOST="$DBX_WORKSPACE"
 
       pip install databricks-cli
   
@@ -41,7 +39,13 @@ steps:
       # Get workspace ID  
       WORKSPACE_ID=$(az databricks workspace show --resource-group $RESOURCE_GROUP --name $WORKSPACE_NAME --query id -o tsv)  
 
-      databricks configure --host $DATABRICKS_HOST -t $DATABRICKS_TOKEN
+      echo "[DEFAULT]                                                               
+      host = $DATABRICKS_HOST
+      token = $DATABRICKS_TOKEN" > ~/.databricks.cfg
+
+      databricks configure -f ./databricks.cfg
+
+      rm ~/.databricks.cfg
   
       # Upload notebook to target workspace  
       databricks workspace import -l PYTHON -f JUPYTER -o $NOTEBOOK_PATH $NOTEBOOK_PATH_DBX  
