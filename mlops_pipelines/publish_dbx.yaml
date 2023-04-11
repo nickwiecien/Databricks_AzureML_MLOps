@@ -43,9 +43,11 @@ steps:
       host = $DATABRICKS_HOST
       token = $DATABRICKS_TOKEN" > ~/.databricks.cfg
 
-      databricks configure --token -f ~/.databricks.cfg
+      DATABRICKS_CONFIG_FILE="~/.databricks.cfg"
 
-      rm ~/.databricks.cfg
+      # databricks configure --token -f ~/.databricks.cfg
+
+      # rm ~/.databricks.cfg
   
       # Upload notebook to target workspace  
       databricks workspace import -l PYTHON -f JUPYTER -o $NOTEBOOK_PATH $NOTEBOOK_PATH_DBX  
