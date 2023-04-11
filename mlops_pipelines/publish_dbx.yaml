@@ -40,12 +40,16 @@ steps:
       WORKSPACE_ID=$(az databricks workspace show --resource-group $RESOURCE_GROUP --name $WORKSPACE_NAME --query id -o tsv)  
 
       echo "[DEFAULT]                                                               
-      host = $DATABRICKS_HOST
-      token = $DATABRICKS_TOKEN" > ~/.databricks.cfg
+      host = $DBX_WORKSPACE
+      token = $DBX_PAT" > ~/.databricks.cfg
 
       DATABRICKS_CONFIG_FILE="~/.databricks.cfg"
 
-      # databricks configure --token -f ~/.databricks.cfg
+      echo "[DEFAULT]                                                               
+      host = $DBX_WORKSPACE
+      token = $DBX_PAT"
+
+      databricks configure --token -f ~/.databricks.cfg
 
       # rm ~/.databricks.cfg
   
