@@ -36,6 +36,8 @@ steps:
       # Upload notebook to target workspace  
       databricks workspace import $NOTEBOOK_PATH $NOTEBOOK_PATH_DBX -l PYTHON -f JUPYTER -o
 
+      databricks jobs list --output json | jq '.jobs[] | select(.settings.name == "TrainingRun") | .job_id' | xargs -n 1 databricks jobs delete --job-id
+
       JOB_ID=$(databricks jobs create --json '{
         "name": "TrainingRun",
         "existing_cluster_id": "$(DBX_CLUSTER)",
@@ -43,14 +45,14 @@ steps:
         "max_retries": 1,
         "notebook_task": {
           "notebook_path": "$(NOTEBOOK_PATH_DBX)",
-          "base_parameters": {
+          "base_parameters": "{
             "subscription_id": "$(SUBSCRIPTION_ID)",
             "resource_group": "$(RESOURCE_GROUP)",
             "workspace": "$(WORKSPACE_NAME)",
             "model_name": "DEV-diabetes-model",
             "endpoint_name": "DEV-diabetes-endpoint",
-            "endpoint_description": "egression model for predicting disease pregression",
-          }
+            "endpoint_description": "Regression model for predicting disease pregression",
+          }"
         }
       }' | jq '.job_id')
 
