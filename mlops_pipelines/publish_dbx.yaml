@@ -43,7 +43,7 @@ steps:
       host = $DATABRICKS_HOST
       token = $DATABRICKS_TOKEN" > ~/.databricks.cfg
 
-      databricks configure -f ~/.databricks.cfg
+      databricks configure --token -f ~/.databricks.cfg
 
       rm ~/.databricks.cfg
   
